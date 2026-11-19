@@ -1,6 +1,9 @@
 provider "docker" {
   # Linux Docker Engine
-  host = "unix:///var/run/docker.sock"
+  # host = "unix:///var/run/docker.sock"
+
+  # Windows
+  host = "npipe:////./pipe/docker_engine"
 
   # For Docker Desktop on Windows, replace the line above with:
   # host = "npipe:////./pipe/docker_engine"
