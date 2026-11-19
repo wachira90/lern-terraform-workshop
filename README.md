@@ -262,3 +262,40 @@ terraform destroy
 - Docker Provider: https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs
 - Docker container resource: https://github.com/kreuzwerker/terraform-provider-docker/blob/master/docs/resources/container.md
 - Terraform refresh-only: https://developer.hashicorp.com/terraform/tutorials/state/refresh
+
+# Terraform Docker Nginx Lab
+
+สร้าง Nginx 5 containers (`www1`-`www5`) ที่ host ports `5001`-`5005`.
+
+## Run
+
+```powershell
+terraform init
+terraform fmt -recursive
+terraform validate
+terraform plan -out="nginx.tfplan"
+terraform apply "nginx.tfplan"
+./check-nginx.ps1
+```
+
+สำหรับ Docker Desktop บน Windows ให้แก้ `provider "docker"` ใน `main.tf` เป็น:
+
+```hcl
+host = "npipe:////./pipe/docker_engine"
+```
+
+## Drift labs
+
+1. Stop: `docker stop www1`
+2. Delete: `docker rm -f www2`
+3. Replace port: ลบ `www3` แล้วสร้างใหม่ด้วย `-p 6003:80`
+4. Restart policy: `docker update --restart=no www4`
+5. Replace image: ลบ `www5` แล้วสร้างใหม่ด้วย `httpd:2.4-alpine`
+
+ตรวจด้วย `terraform plan -refresh-only` และคืนค่าตาม Code ด้วย `terraform plan` ตามด้วย `terraform apply`.
+
+## Cleanup
+
+```powershell
+terraform destroy
+```
